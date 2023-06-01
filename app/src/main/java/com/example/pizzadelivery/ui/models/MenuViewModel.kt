@@ -10,7 +10,7 @@ import kotlinx.coroutines.*
 const val MAX_FLAVORS_NUM = 2
 
 class MenuViewModel constructor(private val mainRepository: PizzaRepository) : ViewModel() {
-
+    val orderConfirmation = MutableLiveData<OrderInfo>()
     val order = MutableLiveData<OrderInfo>()
     val error = MutableLiveData<Int>()
     val flavorsList = MutableLiveData<List<PizzaFlavor>>()
@@ -51,6 +51,15 @@ class MenuViewModel constructor(private val mainRepository: PizzaRepository) : V
 
         // add flavor to order
         order.value = addFlavorToOrder(index, orderInfo)
+    }
+
+    fun confirmOrder() {
+        val orderInfo = order.value ?: OrderInfo(emptyList(), 0f, "")
+        if (orderInfo.selectedFlavors.isNullOrEmpty()) {
+            error.value = R.string.order_empty_msg
+            return
+        }
+        orderConfirmation.value = order.value
     }
 
     override fun onCleared() {

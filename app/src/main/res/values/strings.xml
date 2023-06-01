@@ -8,6 +8,6 @@
     <string name="total">Total: %.2f</string>
     <string name="max_flavors_limit_msg">You can only select a maximum of two flavors.</string>
     <string name="network_err_msg">Connection error.</string>
-
+    <string name="order_empty_msg">Order is empty.</string>
 </resources>
 

@@ -1,5 +1,6 @@
 package com.example.pizzadelivery.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
@@ -16,6 +17,7 @@ import com.example.pizzadelivery.repository.network.RetrofitService
 import com.example.pizzadelivery.ui.adapters.MenuAdapter
 import com.example.pizzadelivery.ui.models.MenuViewModel
 import com.example.pizzadelivery.ui.models.ViewModelFactory
+
 
 class MenuActivity : AppCompatActivity(), OnClickListener {
     private lateinit var menuViewModel: MenuViewModel
@@ -52,11 +54,21 @@ class MenuActivity : AppCompatActivity(), OnClickListener {
             orderDescriptionView.text = it.description
             adapter.setSelectedItems(it.selectedFlavors)
         }
+        menuViewModel.orderConfirmation.observe(this) {
+            val intent = Intent(this, OrderConfirmationActivity::class.java)
+            intent.putExtra(EXTRA_ORDER_INFO, it.description)
+            intent.putExtra(EXTRA_ORDER_PRICE, it.totalPrice)
+            startActivity(intent)
+        }
         menuViewModel.getAllPizzaFlavors()
     }
 
     override fun onClick(view: View) {
         val itemIndex = view.tag as Int
         menuViewModel.addRemoveFlavorToOrder(itemIndex)
+    }
+
+    fun onConfirm(view: View) {
+        menuViewModel.confirmOrder()
     }
 }

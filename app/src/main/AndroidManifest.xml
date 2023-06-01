@@ -14,9 +14,12 @@
         android:theme="@style/Theme.PizzaDelivery"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activities.OrderConfirmationActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.MenuActivity"
-            android:label="@string/menu_activity_label"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/menu_activity_label">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
