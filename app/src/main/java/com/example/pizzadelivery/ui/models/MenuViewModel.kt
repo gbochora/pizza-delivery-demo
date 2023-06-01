@@ -89,8 +89,12 @@ class MenuViewModel constructor(private val mainRepository: PizzaRepository) : V
 
     private fun constructOrderDescription(selectedFlavors: List<Int>) : String {
         var description = ""
+        var partsLabel = ""
+        if (selectedFlavors.size == 1) partsLabel = "1 "
+        if (selectedFlavors.size == 2) partsLabel = "1/2 "
+
         for (pos in selectedFlavors) {
-            description += flavorsList.value?.get(pos)!!.name + "\n"
+            description += partsLabel + flavorsList.value?.get(pos)!!.name + "\n"
         }
         return description
     }
