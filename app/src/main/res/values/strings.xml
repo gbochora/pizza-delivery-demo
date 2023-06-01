@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Pizza Delivery</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="menu_activity_label">Select up to two flavors</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="add_button">Add</string>
+    <string name="remove_button">Remove</string>
+    <string name="total">Total: %.2f</string>
+    <string name="max_flavors_limit_msg">You can only select a maximum of two flavors.</string>
+    <string name="network_err_msg">Connection error.</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="title_activity_pizza_flayfors_menu">PizzaFlayforsMenu</string>
 </resources>
+
