@@ -3,11 +3,12 @@ package com.example.pizzadelivery.ui.models
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.pizzadelivery.domain.PizzaFlavor
 import com.example.pizzadelivery.repository.PizzaRepository
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.*
 import org.junit.Before
@@ -15,6 +16,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import retrofit2.Response
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MenuViewModelTest {
@@ -24,13 +27,15 @@ class MenuViewModelTest {
 
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
-    private val dispatcher = StandardTestDispatcher()
+    private val dispatcher = newSingleThreadContext("Main Thread")
 
     @Before
     fun setUp() {
+        MockKAnnotations.init(this)
         // Set the test dispatcher as the main dispatcher
         Dispatchers.setMain(dispatcher)
     }
+
     @Test
     fun `When fetching the pizza flavors list`() {
         val expected = listOf(PizzaFlavor("pizza1", 101f),
@@ -39,17 +44,21 @@ class MenuViewModelTest {
                                 PizzaFlavor("pizza4", 120f),
                                 PizzaFlavor("pizza5", 101f))
 
-        val viewStates = mutableListOf<PizzaFlavor>()
+        val latch = CountDownLatch(1)
+
         viewModel.flavorsList.observeForever {
-            println("observeForever!!")
-            viewStates.addAll(it)
+            assertEquals(expected, it)
+            latch.countDown() // Notify the latch that the value has been observed
         }
 
         coEvery { pizzaRepository.getAllPizzaFlavors() } returns Response.success(expected)
         viewModel.getAllPizzaFlavors()
-        dispatcher.scheduler.advanceUntilIdle()
 
-        println(viewModel.flavorsList.value.toString())
-//        assertEquals(expected, viewModel.flavorsList.value)
+        // Wait for the latch to be counted down or timeout after a specific duration
+        val timeout = 2L
+        val unit = TimeUnit.SECONDS
+        val latchResult = latch.await(timeout, unit)
+
+        assertEquals(true, latchResult) // Assert that the latch countdown occurred
     }
 }
