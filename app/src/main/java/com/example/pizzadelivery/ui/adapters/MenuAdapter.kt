@@ -15,11 +15,14 @@ class MenuAdapter(private val onAddListener: OnClickListener) : RecyclerView.Ada
     private var itemsList = mutableListOf<PizzaFlavor>()
     private val selectedItems = mutableSetOf<Int>()
 
+    // sets new list of flavors
     fun setPizzaFlavors(flavors: List<PizzaFlavor>) {
         this.itemsList = flavors.toMutableList()
         notifyDataSetChanged()
     }
 
+
+    // updates order selection
     fun setSelectedItems(selectedItemsIndexes : List<Int>) {
         selectedItems.clear()
         for (index in selectedItemsIndexes) {
@@ -43,7 +46,7 @@ class MenuAdapter(private val onAddListener: OnClickListener) : RecyclerView.Ada
     override fun onBindViewHolder(holder: MenuViewHolder, position: Int) {
         val item = itemsList[position]
         holder.textView.text = item.name
-        holder.priceView.text = item.price.toString()
+        holder.priceView.text = "%.2f".format(item.price)
         val buttonLabelId = if (selectedItems.contains(position)) R.string.remove_button else R.string.add_button
         holder.addButton.text = holder.textView.context.resources.getString(buttonLabelId)
         holder.addButton.tag = position

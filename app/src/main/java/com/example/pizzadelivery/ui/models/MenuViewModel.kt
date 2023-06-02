@@ -10,13 +10,14 @@ import kotlinx.coroutines.*
 const val MAX_FLAVORS_NUM = 2
 
 class MenuViewModel constructor(private val mainRepository: PizzaRepository) : ViewModel() {
+    // to handle order confirmation
     val orderConfirmation = MutableLiveData<OrderInfo>()
     val order = MutableLiveData<OrderInfo>()
     val error = MutableLiveData<Int>()
     val flavorsList = MutableLiveData<List<PizzaFlavor>>()
-    var job: Job? = null
+    private var job: Job? = null
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
         error.value = R.string.network_err_msg
     }
 
@@ -34,6 +35,9 @@ class MenuViewModel constructor(private val mainRepository: PizzaRepository) : V
         }
     }
 
+
+    // adds a pizza flavor to the order by its position number if the flavor is not already added.
+    // or removes the flavor if it's already in the order.
     fun addRemoveFlavorToOrder(index : Int) {
         val orderInfo = order.value ?: OrderInfo(emptyList(), 0f, "")
 
@@ -53,9 +57,10 @@ class MenuViewModel constructor(private val mainRepository: PizzaRepository) : V
         order.value = addFlavorToOrder(index, orderInfo)
     }
 
+    // confirms order if it's not empty
     fun confirmOrder() {
         val orderInfo = order.value ?: OrderInfo(emptyList(), 0f, "")
-        if (orderInfo.selectedFlavors.isNullOrEmpty()) {
+        if (orderInfo.selectedFlavors.isEmpty()) {
             error.value = R.string.order_empty_msg
             return
         }
@@ -64,21 +69,24 @@ class MenuViewModel constructor(private val mainRepository: PizzaRepository) : V
 
     override fun onCleared() {
         super.onCleared()
-        job?.cancel()
+        this.job?.cancel()
     }
 
+    // removes the flavor from the order and returns new OrderInfo instance
     private fun removeFlavorFromOrder(index: Int, orderInfo: OrderInfo) : OrderInfo {
         val newList = orderInfo.selectedFlavors.toMutableList()
         newList.remove(index)
         return OrderInfo(newList, calcOrderPrice(newList), constructOrderDescription(newList))
     }
 
+    // adds the flavor to the order and returns new OrderInfo instance
     private fun addFlavorToOrder(index: Int, orderInfo: OrderInfo) : OrderInfo {
         val newList = orderInfo.selectedFlavors.toMutableList()
         newList.add(index)
         return OrderInfo(newList, calcOrderPrice(newList), constructOrderDescription(newList))
     }
 
+    // calculates the order total price based on flavors list
     private fun calcOrderPrice(selectedFlavors: List<Int>) : Float {
         var total = 0f
         for (pos in selectedFlavors) {
@@ -87,6 +95,7 @@ class MenuViewModel constructor(private val mainRepository: PizzaRepository) : V
         return total
     }
 
+    // constructs the order description based on flavors list
     private fun constructOrderDescription(selectedFlavors: List<Int>) : String {
         var description = ""
         var partsLabel = ""

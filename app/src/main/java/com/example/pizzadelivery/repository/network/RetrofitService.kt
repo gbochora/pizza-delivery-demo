@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitService {
-    val baseUrl = "https://static.mozio.com/mobile/tests/"
+    private const val baseUrl = "https://static.mozio.com/mobile/tests/"
 
     fun getInstance(): Retrofit {
         var mHttpLoggingInterceptor = HttpLoggingInterceptor()
