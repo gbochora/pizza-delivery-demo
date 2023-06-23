@@ -1,4 +1,4 @@
-package com.example.pizzadelivery.repository.network
+package com.example.pizzadelivery.data
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

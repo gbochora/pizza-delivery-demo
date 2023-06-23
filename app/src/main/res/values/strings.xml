@@ -6,6 +6,7 @@
     <string name="add_button">Add</string>
     <string name="remove_button">Remove</string>
     <string name="total">Total: %.2f</string>
+    <string name="no_pizza_in_order">There is no such pizza in the order</string>
     <string name="max_flavors_limit_msg">You can only select a maximum of two flavors.</string>
     <string name="network_err_msg">Connection error.</string>
     <string name="order_empty_msg">Order is empty.</string>

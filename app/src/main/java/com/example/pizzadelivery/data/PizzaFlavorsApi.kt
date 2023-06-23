@@ -1,6 +1,5 @@
-package com.example.pizzadelivery.repository.network
+package com.example.pizzadelivery.data
 
-import com.example.pizzadelivery.domain.PizzaFlavor
 import retrofit2.Response
 import retrofit2.http.GET
 

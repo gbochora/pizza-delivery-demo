@@ -1,6 +1,5 @@
 package com.example.pizzadelivery.ui.adapters
 
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -9,9 +8,10 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizzadelivery.R
-import com.example.pizzadelivery.domain.PizzaFlavor
+import com.example.pizzadelivery.data.PizzaFlavor
+import com.example.pizzadelivery.ui.activities.PizzaItemClickListener
 
-class MenuAdapter(private val onAddListener: OnClickListener) : RecyclerView.Adapter<MenuAdapter.MenuViewHolder>() {
+class MenuAdapter(private val pizzaItemClickListener: PizzaItemClickListener) : RecyclerView.Adapter<MenuAdapter.MenuViewHolder>(), OnClickListener {
     private var itemsList = mutableListOf<PizzaFlavor>()
     private val selectedItems = mutableSetOf<Int>()
 
@@ -35,21 +35,13 @@ class MenuAdapter(private val onAddListener: OnClickListener) : RecyclerView.Ada
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.pizza_flavor_view, parent, false)
-        val holder = MenuViewHolder(view)
 
-        // set onClick listener to the ADD button
-        holder.addButton.setOnClickListener(onAddListener)
-        return holder
+        return MenuViewHolder(view, this)
     }
 
     // binds the list items to a view
     override fun onBindViewHolder(holder: MenuViewHolder, position: Int) {
-        val item = itemsList[position]
-        holder.textView.text = item.name
-        holder.priceView.text = "%.2f".format(item.price)
-        val buttonLabelId = if (selectedItems.contains(position)) R.string.remove_button else R.string.add_button
-        holder.addButton.text = holder.textView.context.resources.getString(buttonLabelId)
-        holder.addButton.tag = position
+        holder.bind(itemsList[position], position, selectedItems.contains(position))
     }
 
     // return the number of the items in the list
@@ -57,10 +49,31 @@ class MenuAdapter(private val onAddListener: OnClickListener) : RecyclerView.Ada
         return itemsList.size
     }
 
-    class MenuViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.nameView)
-        val priceView: TextView = itemView.findViewById(R.id.priceView)
-        val addButton: Button = itemView.findViewById(R.id.addRemove)
+    class MenuViewHolder(itemView: View, onClick: OnClickListener) : RecyclerView.ViewHolder(itemView) {
+        private val textView: TextView = itemView.findViewById(R.id.nameView)
+        private val priceView: TextView = itemView.findViewById(R.id.priceView)
+        private val addButton: Button = itemView.findViewById(R.id.addRemove)
+
+        init {
+            addButton.setOnClickListener(onClick)
+        }
+
+        fun bind(item: PizzaFlavor, position: Int, selected: Boolean) {
+            textView.text = item.name
+            priceView.text = "%.2f".format(item.price)
+            val buttonLabelId = if (selected) R.string.remove_button else R.string.add_button
+            addButton.text = textView.context.resources.getString(buttonLabelId)
+            addButton.tag = position
+        }
+    }
+
+    override fun onClick(view: View?) {
+        val position = view?.tag as Int
+        if (selectedItems.contains(position)) {
+            pizzaItemClickListener.onRemoveClick(position)
+        } else {
+            pizzaItemClickListener.onAddClick(position)
+        }
     }
 }
 

@@ -1,9 +1,8 @@
 package com.example.pizzadelivery.ui.models
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.pizzadelivery.domain.PizzaFlavor
-import com.example.pizzadelivery.repository.PizzaRepository
-import io.mockk.MockKAnnotations
+import com.example.pizzadelivery.data.PizzaFlavor
+import com.example.pizzadelivery.data.PizzaRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -31,18 +30,19 @@ class MenuViewModelTest {
 
     @Before
     fun setUp() {
-        MockKAnnotations.init(this)
         // Set the test dispatcher as the main dispatcher
         Dispatchers.setMain(dispatcher)
     }
 
     @Test
     fun `When fetching the pizza flavors list`() {
-        val expected = listOf(PizzaFlavor("pizza1", 101f),
+        val expected = listOf(
+            PizzaFlavor("pizza1", 101f),
                                 PizzaFlavor("pizza2", 110f),
                                 PizzaFlavor("pizza3", 111f),
                                 PizzaFlavor("pizza4", 120f),
-                                PizzaFlavor("pizza5", 101f))
+                                PizzaFlavor("pizza5", 101f)
+        )
 
         val latch = CountDownLatch(1)
 
@@ -51,8 +51,8 @@ class MenuViewModelTest {
             latch.countDown() // Notify the latch that the value has been observed
         }
 
-        coEvery { pizzaRepository.getAllPizzaFlavors() } returns Response.success(expected)
-        viewModel.getAllPizzaFlavors()
+        coEvery { pizzaRepository.fetchPizzaFlavors() } returns Response.success(expected)
+        viewModel.fetchAllPizzaFlavors()
 
         // Wait for the latch to be counted down or timeout after a specific duration
         val timeout = 2L

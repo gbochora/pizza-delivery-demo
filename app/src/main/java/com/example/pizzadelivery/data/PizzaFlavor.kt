@@ -1,4 +1,4 @@
-package com.example.pizzadelivery.domain
+package com.example.pizzadelivery.data
 
 data class PizzaFlavor(
     val name: String,

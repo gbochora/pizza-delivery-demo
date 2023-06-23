@@ -2,7 +2,7 @@ package com.example.pizzadelivery.ui.models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.pizzadelivery.repository.PizzaRepository
+import com.example.pizzadelivery.data.PizzaRepository
 
 class ViewModelFactory constructor(private val repository: PizzaRepository): ViewModelProvider.Factory {
 
